@@ -1,0 +1,48 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.1'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+//    id "com.palantir.docker" version '0.34.0'
+//    id 'com.palantir.docker-run' version '0.34.0'
+    id 'pl.allegro.tech.build.axion-release' version '1.13.14'
+    id 'java'
+
+}
+
+//group = 'com.rzheng'
+//version = '0.0.1-SNAPSHOT'
+//sourceCompatibility = '11'
+project.version = scmVersion.version
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+//docker {
+////    name "${project.name}:${project.version}"
+//    name "testName"
+////    files "$buildDir/libs/${project.name}-${project.version}.jar"
+//    files "test file"
+////    buildArgs ([JAR_FILE: "${project.name}-${project.version}.jar"])
+//    buildArgs ([JAR_FILE: "test"])
+//}
+//
+//dockerRun {
+////    name "${project.name}"
+//    name "test"
+////    image "${project.name}:${project.version}"
+//    image "test"
+//    ports '8080:8080'
+//    clean true
+//    daemonize false
+//}
