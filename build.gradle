@@ -1,18 +1,14 @@
 plugins {
     id 'org.springframework.boot' version '2.7.1'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-//    id "com.palantir.docker" version '0.34.0'
-//    id 'com.palantir.docker-run' version '0.34.0'
-    id 'pl.allegro.tech.build.axion-release' version '1.13.14'
+    id "com.palantir.docker" version '0.34.0'
+    id 'com.palantir.docker-run' version '0.34.0'
+    id 'pl.allegro.tech.build.axion-release' version '1.13.14' // for version control
     id 'java'
 
 }
 
-//group = 'com.rzheng'
-//version = '0.0.1-SNAPSHOT'
-//sourceCompatibility = '11'
 project.version = scmVersion.version
-
 
 repositories {
     mavenCentral()
@@ -28,21 +24,19 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-//docker {
-////    name "${project.name}:${project.version}"
-//    name "testName"
-////    files "$buildDir/libs/${project.name}-${project.version}.jar"
-//    files "test file"
-////    buildArgs ([JAR_FILE: "${project.name}-${project.version}.jar"])
-//    buildArgs ([JAR_FILE: "test"])
-//}
-//
-//dockerRun {
-////    name "${project.name}"
-//    name "test"
-////    image "${project.name}:${project.version}"
-//    image "test"
-//    ports '8080:8080'
-//    clean true
-//    daemonize false
-//}
+docker {
+    // project.name is specified in settings.gradle
+    name "${project.name}:${project.version}"
+    // copy jar file to Docker container
+    files "$buildDir/libs/${project.name}-${project.version}.jar"
+    // create ARG(arguments) in Dockerfile
+    buildArgs ([JAR_FILE: "${project.name}-${project.version}.jar"])
+}
+
+dockerRun {
+    name "${project.name}"
+    image "${project.name}:${project.version}"
+    ports '8080:8080'
+    clean true // when container is killed it should be removed
+    daemonize false // all output should go to the console
+}

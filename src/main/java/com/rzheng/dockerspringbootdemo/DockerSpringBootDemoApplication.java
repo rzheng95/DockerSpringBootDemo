@@ -16,6 +16,6 @@ public class DockerSpringBootDemoApplication {
 
     @GetMapping("/hello")
     public String helloWorld() {
-        return "Hello World! Richard Zheng!!!";
+        return "Hello World! Richard Zheng!!! Test";
     }
 }

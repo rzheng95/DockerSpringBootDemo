@@ -1,1 +1,2 @@
-rootProject.name = 'DockerSpringBootDemo'
+// project name has to be in lowercase for Docker image
+rootProject.name = 'dockerspringbootdemo'
