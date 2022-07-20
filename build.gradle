@@ -3,19 +3,31 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id "com.palantir.docker" version '0.34.0'
     id 'com.palantir.docker-run' version '0.34.0'
+    id "com.palantir.docker-compose" version "0.34.0"
     id 'pl.allegro.tech.build.axion-release' version '1.13.14' // for version control
     id 'java'
 
 }
 
 project.version = scmVersion.version
+// in a new docker image, the version is always reset back to default
 
 repositories {
     mavenCentral()
 }
 
+ext {
+    postgresql = '42.4.0'
+    lombok = '1.18.24'
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+//    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation "org.postgresql:postgresql:${postgresql}"
+    implementation "org.projectlombok:lombok:${lombok}"
+    annotationProcessor 'org.projectlombok:lombok:'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -25,18 +37,37 @@ tasks.named('test') {
 }
 
 docker {
-    // project.name is specified in settings.gradle
+    // the name to use for this container, may include a tag
     name "${project.name}:${project.version}"
-    // copy jar file to Docker container
-    files "$buildDir/libs/${project.name}-${project.version}.jar"
-    // create ARG(arguments) in Dockerfile
-    buildArgs ([JAR_FILE: "${project.name}-${project.version}.jar"])
+    // files "$buildDir/libs/${project.name}-${project.version}.jar"
+    // copy gradle files into build context
+    // (folder & files in build context are available for access in Dockerfile)
+    // https://github.com/palantir/gradle-docker/issues/168
+    files 'gradlew', 'build.gradle', 'settings.gradle'
+    copySpec.with {
+        // copy entire src folder into build context
+        from('.') {
+            include 'src/**'
+            into 'src'
+        }
+        from('.') {
+            include 'gradle/**'
+            into 'gradle'
+        }
+    }
+
+    // create ARGs in Dockerfile
+    // an argument map of string to string which will set --build-arg arguments to the docker build command
+    buildArgs ([JDK_VERSION: 11,
+                WORK_DIR: 'richard',
+                JAR_FILE: "${project.name}-${project.version}.jar"]) // dockerspringbootdemo-0.1.0-SNAPSHOT.jar
 }
 
 dockerRun {
     name "${project.name}"
     image "${project.name}:${project.version}"
     ports '8080:8080'
+    volumes '.': '/demo-volume'
     clean true // when container is killed it should be removed
     daemonize false // all output should go to the console
 }

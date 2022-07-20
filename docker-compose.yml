@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  db:
+    image: postgres
+    container_name: rzheng-postgres
+    # Volume mounted for database for the storage
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    # Environment variable for DB name, user and password
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=rzheng
+
+
+  # Back-end Spring Boot Application
+  backend:
+    # the back-end is the entire root directory
+    build:
+      context: .
+      args:
+        - JDK_VERSION=11
+        - WORK_DIR=richard
+        - JAR_FILE=dockerspringbootdemo-0.1.0-SNAPSHOT.jar
+
+    container_name: rzheng-spring-boot
+    depends_on:
+      - db
+
+    # Environment variables for Spring Boot Application.
+    # These variables have to match in application.properties
+    environment:
+      - DB_SERVER=db
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=rzheng
+    ports:
+      - 8080:8080
+#    links:
+#      - db
+
+# Volumes for DB data
+volumes:
+  db-data:
