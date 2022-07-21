@@ -24,7 +24,7 @@ public class StudentController {
     }
     @GetMapping("/hello")
     public String helloWorld() {
-        return "Hello World! Richard!!!";
+        return "Hello World! Richard!!! Test Dev Tool";
     }
 
     @PostMapping("/student")

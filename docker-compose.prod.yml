@@ -17,15 +17,15 @@ services:
 
   # Back-end Spring Boot Application
   backend:
-    image: eclipse-temurin:11
-    command: ./gradlew bootRun
-    volumes:
-      - .:/usr/src/rzheng:rw
-    working_dir: /usr/src/rzheng
-    ports:
-      - 8080:8080
+    # the back-end is the entire root directory
+    build:
+      context: .
+      args:
+        - JDK_VERSION=11
+        - WORK_DIR=richard
+        - JAR_FILE=dockerspringbootdemo-0.1.0-SNAPSHOT.jar
 
-    container_name: rzheng-spring-boot-dev
+    container_name: rzheng-spring-boot
     depends_on:
       - db
 
@@ -36,7 +36,8 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=rzheng
-
+    ports:
+      - 8080:8080
 
 # Volumes for DB data
 volumes:
