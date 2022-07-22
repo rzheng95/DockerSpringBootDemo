@@ -67,7 +67,7 @@ dockerRun {
     name "${project.name}"
     image "${project.name}:${project.version}"
     ports '8080:8080'
-    volumes '.': '/demo-volume'
+    volumes '.':'/usr/src/rzheng:rw'
     clean true // when container is killed it should be removed
     daemonize false // all output should go to the console
 }

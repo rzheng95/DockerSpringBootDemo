@@ -8,11 +8,12 @@ services:
       - db-data:/var/lib/postgresql/data
     ports:
       - 5432:5432
-    # Environment variable for DB name, user and password
+    # Environment variable are defined in .env file
+    # .env should be git ignored
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=rzheng
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 
   # Back-end Spring Boot Application
@@ -32,10 +33,10 @@ services:
     # Environment variables for Spring Boot Application.
     # These variables have to match in application.properties
     environment:
-      - DB_SERVER=db
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=rzheng
+      - DB_SERVER=${DB_SERVER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 
 # Volumes for DB data
